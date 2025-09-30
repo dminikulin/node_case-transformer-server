@@ -8,9 +8,11 @@ const { convertToCase } = require('./convertToCase/index');
 function createServer() {
   return http.createServer((req, res) => {
     const supportedCases = ['SNAKE', 'KEBAB', 'CAMEL', 'PASCAL', 'UPPER'];
-    const parsedUrl = new URL(req.url, 'http://localhost');
-    const textToConvert = parsedUrl.pathname.slice(1);
-    const caseType = parsedUrl.searchParams.get('toCase');
+
+    const [pathPart, queryString] = req.url.split('?');
+    const params = new URLSearchParams(queryString || '');
+    const caseType = params.get('toCase');
+    const textToConvert = pathPart ? decodeURIComponent(pathPart.slice(1)) : '';
 
     const errors = [];
 
@@ -36,7 +38,7 @@ function createServer() {
     }
 
     if (errors.length > 0) {
-      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.writeHead(400, 'Bad Request', { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ errors }));
 
       return;
@@ -44,7 +46,7 @@ function createServer() {
 
     const result = convertToCase(textToConvert, caseType);
 
-    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.writeHead(200, 'OK', { 'Content-Type': 'application/json' });
 
     res.end(
       JSON.stringify({
