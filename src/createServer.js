@@ -3,7 +3,7 @@
 // Also, you can create additional files in the src folder
 // and import (require) them here
 const http = require('http');
-const { convertToCase } = require('./convertToCase/index');
+const { convertToCase } = require('./convertToCase/convertToCase');
 
 function createServer() {
   return http.createServer((req, res) => {
@@ -38,7 +38,7 @@ function createServer() {
     }
 
     if (errors.length > 0) {
-      res.writeHead(400, 'Bad Request', { 'Content-Type': 'application/json' });
+      res.writeHead(400, 'Bad request', { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ errors }));
 
       return;
